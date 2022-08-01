@@ -1,7 +1,7 @@
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser, UserManager
 from django.db.models import Model, DateTimeField, BooleanField, CharField, ForeignKey, TextField, EmailField, \
-    PositiveIntegerField, IntegerField, ImageField, ManyToManyField, CASCADE, IntegerChoices , FileField
+    PositiveIntegerField, IntegerField, SlugField, ImageField, ManyToManyField, CASCADE, IntegerChoices , FileField
 from django.utils.text import slugify
 
 from apps.shared.models import BaseModel, DeletedModel
@@ -13,6 +13,7 @@ from apps.shared.models import BaseModel, DeletedModel
 class Project(DeletedModel , BaseModel):
     title = CharField(max_length=225)
     code = CharField(max_length=100, default=f'{title}-{len(title)}')
+    slug = SlugField(unique=True)
 
 
 class Task(Model):
@@ -33,6 +34,7 @@ class Task(Model):
     status = IntegerField(choices=Status.choices, null=True, blank=True)
     author = ForeignKey('User' , CASCADE , null=True)
     step = IntegerField()
+    slug = SlugField(unique=True)
     project = ForeignKey('Project' , CASCADE)
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
@@ -42,8 +44,9 @@ class Task(Model):
 
 class Comment(DeletedModel , BaseModel):
     message = TextField()
-    file = FileField(upload_to='comment-media/')
-    task_fk = ForeignKey('Task' , CASCADE , null=True)
+    file = FileField(upload_to='media/')
+    task_fk = ForeignKey('Task', CASCADE, null=True)
+    slug = SlugField(unique=True)
     # FILE =
 
     comment_fk = ManyToManyField('User', CASCADE)
