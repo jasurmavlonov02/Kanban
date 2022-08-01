@@ -38,8 +38,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'apps.users',
+    'apps.shared',
+
     # rest-framework
     'rest_framework',
+
 
 
 ]
@@ -74,6 +78,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'root.wsgi.application'
+# AUTH_USER_MODEL = 'users.User'
 
 
 # Database

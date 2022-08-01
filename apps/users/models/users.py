@@ -1,41 +1,21 @@
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.base_user import BaseUserManager
+from django.contrib.auth.models import AbstractUser, UserManager
 from django.db.models import Model, DateTimeField, BooleanField, CharField, ForeignKey, TextField, EmailField, \
     PositiveIntegerField, IntegerField, ImageField, ManyToManyField, CASCADE, IntegerChoices , FileField
 
+from apps.shared.models import BaseModel, DeletedModel
 
-class BaseModel(Model):
-    create_at = DateTimeField(auto_now=True)
-    update_at = DateTimeField(auto_now_add=True)
-
-    class Meta:
-        abstract = True
-
-
-class DeletedModel(Model):
-    deleted_at = DateTimeField(null=True, blank=True)
-    is_deleted = BooleanField(default=False)
-
-    class Meta:
-        abstract = True
 
 class Role(Model):
-    'CEO'
-    'Branch'
-    'Director'
-    'Administrator'
-    'Administrator'
+
     name = CharField(max_length=255)
 
 
-class User(AbstractUser , BaseModel ,DeletedModel ):
 
-    first_name = CharField(max_length=20)
-    last_name = CharField(max_length=20)
-    username = CharField(max_length=100)
-    phone_number = CharField(max_length=12)
-    photo = ImageField(upload_to='media/')
-    email = EmailField()
-    role =ManyToManyField('Role' , related_name='role')
+
+
+
+
 
 
 
@@ -47,7 +27,9 @@ class Project(DeletedModel , BaseModel):
 class Task(Model):
 
     class Priority(IntegerChoices):
-        easy = 'easy'
+        SMALL = 'SMALL'
+        MEDIUM = 'MEDIUM'
+        LARGE = 'LARGE'
 
     class Status(IntegerChoices):
         pass
@@ -60,6 +42,7 @@ class Task(Model):
     status = IntegerField(choices=Status.choices, null=True, blank=True)
     author = ForeignKey('User' , CASCADE , null=True)
     step = IntegerField()
+    project = ForeignKey('Project' , CASCADE)
 
 
 class Comment(DeletedModel , BaseModel):
@@ -68,9 +51,43 @@ class Comment(DeletedModel , BaseModel):
     task_fk = ForeignKey('Task' , CASCADE , null=True)
     # FILE =
 
-    # comment_fornkey
+    comment_fk = ManyToManyField('User', CASCADE)
     # Step:
     # index
     # unique
+
+    class UserManager(BaseUserManager):
+
+        def create_user(self, email, password=None, **extra_fields):
+            if not email:
+                raise ValueError('User should have phone number ! ')
+            user = self.model(email=email, **extra_fields)
+            user.set_password(password)
+            user.save(using=self._db)
+            return user
+
+        def create_superuser(self, email, password=None, **extra_fields):
+            user = self.create_user(email, password, **extra_fields)
+            user.is_staff = True
+            user.is_superuser = True
+            user.save(using=self._db)
+            return user
+
+    class User(AbstractUser, BaseModel, DeletedModel):
+        class Role(IntegerChoices):
+            ADMIN = 'ADMIN'
+            PROJECT_MANAGER = 'PROJECT_MANAGER'
+            DEVELOPER = 'DEVELOPER'
+
+        first_name = CharField(max_length=20)
+        last_name = CharField(max_length=20)
+        username = CharField(max_length=100)
+        phone_number = CharField(max_length=12)
+        photo = ImageField(upload_to='media/')
+        email = EmailField()
+        role = ManyToManyField(choices=Role.choices, null=True, blank=True)
+        objects = UserManager()
+
+
 
 
