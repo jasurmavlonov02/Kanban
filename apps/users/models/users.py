@@ -6,16 +6,6 @@ from django.db.models import Model, DateTimeField, BooleanField, CharField, Fore
 from apps.shared.models import BaseModel, DeletedModel
 
 
-class Role(Model):
-
-    name = CharField(max_length=255)
-
-
-
-
-
-
-
 
 
 
@@ -47,7 +37,7 @@ class Task(Model):
 
 class Comment(DeletedModel , BaseModel):
     message = TextField()
-    file = FileField(upload_to='media/')
+    file = FileField(upload_to='comment-media/')
     task_fk = ForeignKey('Task' , CASCADE , null=True)
     # FILE =
 
