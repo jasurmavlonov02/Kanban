@@ -1,6 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db.models import Model, DateTimeField, BooleanField, CharField, ForeignKey, TextField, EmailField, \
-    IntegerField, ImageField, ManyToManyField, CASCADE, IntegerChoices, FileField
+    IntegerField, ImageField, ManyToManyField, CASCADE, IntegerChoices, FileField, SlugField
 
 
 class BaseModel(Model):
@@ -36,11 +36,13 @@ class User(AbstractUser, BaseModel, DeletedModel):
     photo = ImageField(upload_to='media/')
     email = EmailField()
     role = ManyToManyField('Role', related_name='role')
+    slug = SlugField(unique=True)
 
 
 class Project(DeletedModel, BaseModel):
     title = CharField(max_length=225)
     code = CharField(max_length=100, default=f'{title}-{len(title)}')
+    slug = SlugField(unique=True)
 
 
 class Task(Model):
@@ -58,12 +60,14 @@ class Task(Model):
     status = IntegerField(choices=Status.choices, null=True, blank=True)
     author = ForeignKey('User', CASCADE, null=True)
     step = IntegerField()
+    slug = SlugField(unique=True)
 
 
 class Comment(DeletedModel, BaseModel):
     message = TextField()
     file = FileField(upload_to='media/')
     task_fk = ForeignKey('Task', CASCADE, null=True)
+    slug = SlugField(unique=True)
     # FILE =
 
     # comment_fornkey
