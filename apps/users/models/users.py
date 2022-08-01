@@ -2,6 +2,7 @@ from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser, UserManager
 from django.db.models import Model, DateTimeField, BooleanField, CharField, ForeignKey, TextField, EmailField, \
     PositiveIntegerField, IntegerField, ImageField, ManyToManyField, CASCADE, IntegerChoices , FileField
+from django.utils.text import slugify
 
 from apps.shared.models import BaseModel, DeletedModel
 
@@ -33,6 +34,10 @@ class Task(Model):
     author = ForeignKey('User' , CASCADE , null=True)
     step = IntegerField()
     project = ForeignKey('Project' , CASCADE)
+
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+        self.slug = slugify(self.title)
+        super().save(force_insert, force_update, using, update_fields)
 
 
 class Comment(DeletedModel , BaseModel):
