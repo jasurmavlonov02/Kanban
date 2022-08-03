@@ -11,9 +11,9 @@ from apps.users.managers import UserManager
 
 class User(AbstractUser, BaseModel, DeletedModel):
     class Role(TextChoices):
-        ADMIN = 1
-        PROJECT_MANAGER = 2
-        DEVELOPER = 3
+        ADMIN = 'admin'
+        PROJECT_MANAGER = 'project_manager'
+        DEVELOPER = 'developer'
 
     first_name = CharField(max_length=20)
     last_name = CharField(max_length=20)
@@ -21,7 +21,7 @@ class User(AbstractUser, BaseModel, DeletedModel):
     phone_number = CharField(max_length=12)
     photo = ImageField(upload_to='media/')
     email = EmailField(unique=True)
-    role = CharField(choices=Role.choices, blank=True, null=True)
+    role = CharField(max_length=15,choices=Role.choices, blank=True, null=True)
 
     objects = UserManager()
 
