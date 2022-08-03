@@ -21,7 +21,7 @@ class User(AbstractUser, BaseModel, DeletedModel):
     phone_number = CharField(max_length=12)
     photo = ImageField(upload_to='media/')
     email = EmailField(unique=True)
-    role = CharField(max_length=255,choices=Role.choices, blank=True, null=True)
+    role = CharField(max_length=15,choices=Role.choices, blank=True, null=True)
 
     objects = UserManager()
 
