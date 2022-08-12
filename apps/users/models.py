@@ -21,7 +21,7 @@ class User(AbstractUser, BaseModel, DeletedModel):
     phone_number = CharField(max_length=12)
     photo = ImageField(upload_to='media/')
     email = EmailField(unique=True)
-    role = CharField(max_length=15,choices=Role.choices, blank=True, null=True)
+    role = CharField(max_length=15, choices=Role.choices, blank=True, null=True)
 
     objects = UserManager()
 
@@ -43,7 +43,7 @@ class Project(DeletedModel, BaseModel):
         super().save(force_insert, force_update, using, update_fields)
 
 
-class Task(Model):
+class Task(DeletedModel,BaseModel):
     class Priority(IntegerChoices):
         SMALL = 1
         MEDIUM = 2

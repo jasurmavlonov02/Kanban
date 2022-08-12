@@ -7,10 +7,12 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated, DjangoModelPermissions
 
 from apps.users.models import User, Task, Project
-from apps.users.serializers.users import UserModelSerializer, RegisterModelSerializer, TaskModelSerializer, \
-    ProjectModelSerializer
-from users.permissions import IsAdminRole, IsDeveloperRole
-from users.serializers.users import ProjectCreateModelSerializer, ProjectDetailModelSerializer
+from apps.users.serializers.projects import ProjectModelSerializer, ProjectCreateModelSerializer, \
+    ProjectDetailModelSerializer
+from apps.users.serializers.tasks import TaskModelSerializer
+from apps.users.serializers.users import UserModelSerializer, RegisterModelSerializer
+
+from apps.users.permissions import IsAdminRole, IsDeveloperRole
 
 
 class UserModelViewSet(ModelViewSet):
@@ -28,30 +30,3 @@ class UserModelViewSet(ModelViewSet):
             'message': 'User successfully created!'
         }
         return Response(data, status.HTTP_201_CREATED)
-
-
-class TaskModelViewSet(ModelViewSet):
-    queryset = Task.objects.all()
-    serializer_class = TaskModelSerializer
-    lookup_url_kwarg = 'pk'
-    permission_classes = (IsAuthenticatedOrReadOnly,)
-
-
-class ProjectModelViewSet(ModelViewSet):
-    queryset = Project.objects.all()
-    serializer_class = ProjectModelSerializer
-    lookup_url_kwarg = 'pk'
-
-    def get_serializer_class(self):
-        if self.action == 'create':
-            return ProjectCreateModelSerializer
-        elif self.action in ['retrieve']:
-            return ProjectDetailModelSerializer
-        return super().get_serializer_class()
-
-    # permission_classes = (DjangoModelPermissions,)
-
-    def create(self, request, *args, **kwargs):
-        print(12334)
-        return super().create(request, *args, **kwargs)
-

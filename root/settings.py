@@ -41,10 +41,12 @@ INSTALLED_APPS = [
     'apps.users',
     'apps.shared',
 
-
+    # installed
 
     'rest_framework',
-    'drf_yasg'
+
+    'drf_yasg',
+    'django_filters'
 ]
 
 MIDDLEWARE = [
@@ -131,6 +133,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
@@ -142,12 +145,14 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
     'DATETIME_FORMAT': "%Y-%m-%d %H:%M:%S",
-    'DEFAULT_PAGINATION_CLASS': 'apps.shared.rest_framework.pagination.PageNumberPagination',
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
+    'DEFAULT_PAGINATION_CLASS': 'apps.shared.rest_framework.pagination.CustomPageNumberPagination',
     'PAGE_SIZE': 10
 }
 
 
 # Swagger settings
+
 SWAGGER_SETTINGS = {
     'SECURITY_DEFINITIONS': {
         'basic': {
